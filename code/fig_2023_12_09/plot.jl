@@ -1,6 +1,6 @@
 
 using CSV, DataFrames
-import("../plotting/plotting.jl")
+include("../plotting/plotting.jl")
 
 
 df = CSV.File("ailm_va.csv") |> DataFrame
@@ -22,6 +22,12 @@ function makeMatrix(df::DataFrame,type::String)
     matrix
 
 end
+
+autMin=40
+autMax=250
+autStep=20
+
+autV=collect(autMin:autStep:autMax)
 
 expressMatrix0=makeMatrix(df,"e0")
 expressMatrix1=makeMatrix(df,"e1")

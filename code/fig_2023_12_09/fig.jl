@@ -21,16 +21,16 @@ optimizer=Flux.Optimise.Descent(learningRate)
 
 numEpochs=400
 
-trialsN=10
+trialsN=25
 
-autMin=40
-autMax=250
-autStep=20
+autMin=30
+autMax=180
+autStep=5
 
 autV=collect(autMin:autStep:autMax)
 autT=length(autV)
 
-generation0=10
+generation0=15
 generation1=30
 #=
 expressMatrix0=Matrix{Float64}(undef,autT,trialsN)
@@ -49,7 +49,7 @@ mu2=0.125
 filename="ailm_va.csv"
 
 
-header = "aut, trial, propertyType, property\n"
+header = "aut,trial,propertyType,property\n"
 
 open(filename, "w") do file
     write(file, header)
@@ -120,9 +120,9 @@ global(filename)
                 end
                 
                 open(filename, "a") do file                   
-                    write(file, "$autIndex, $trialC, e"*gen*", $express\n")
-                    write(file, "$autIndex, $trialC, c"*gen*", $compose\n")
-                    write(file, "$autIndex, $trialC, s"*gen*", $stable\n")
+                    write(file,"$autIndex,$trialC,e"*gen*",$express\n")
+                    write(file, "$autIndex,$trialC,c"*gen*",$compose\n")
+                    write(file, "$autIndex,$trialC,s"*gen*",$stable\n")
                     flush(file)
                 end
             end
