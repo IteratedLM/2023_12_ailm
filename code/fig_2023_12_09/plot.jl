@@ -1,5 +1,6 @@
 
-using CSV, DataFrames
+using CSV, DataFrames,Gadfly
+import Cairo, Fontconfig
 include("../plotting/plotting.jl")
 
 
@@ -23,9 +24,11 @@ function makeMatrix(df::DataFrame,type::String)
 
 end
 
-autMin=40
-autMax=250
-autStep=20
+
+
+autMin=30
+autMax=180
+autStep=5
 
 autV=collect(autMin:autStep:autMax)
 

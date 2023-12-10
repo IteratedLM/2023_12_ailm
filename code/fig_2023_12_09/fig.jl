@@ -21,7 +21,10 @@ optimizer=Flux.Optimise.Descent(learningRate)
 
 numEpochs=400
 
+trials0=25
 trialsN=25
+firstRun=false
+
 
 autMin=30
 autMax=180
@@ -49,12 +52,13 @@ mu2=0.125
 filename="ailm_va.csv"
 
 
-header = "aut,trial,propertyType,property\n"
-
-open(filename, "w") do file
-    write(file, header)
+if firstRun
+    header = "aut,trial,propertyType,property\n"
+    open(filename, "w") do file
+        write(file, header)
+    end
 end
-
+    
 bgCompose=0.0::Float64
 bgExpress=0.0::Float64
 bgStable =0.0::Float64
@@ -77,13 +81,13 @@ for backgroundC in 1:backgroundN
     
 end
 
-progress = Progress(trialsN*autT*generation1)
+progress = Progress((trialsN-trials0+1)*autT*generation1)
 
-for trialC in 1:trialsN
+for trialC in trials0:trialsN
 
     global(bottleN,bitN)
     global(bgCompose,bgExpress,bgStable)
-global(filename)
+    global(filename)
 
     for (autIndex,autC) in enumerate(autV)
         
