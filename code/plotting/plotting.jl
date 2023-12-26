@@ -1,3 +1,5 @@
+using Colors
+using Statistics,DataFrames,Gadfly,ProgressMeter
 
 function plotProperty(propertyMatrix,xAxis,filename,color,yLabel)
     mu=vec(mean(propertyMatrix, dims=2))
@@ -59,6 +61,7 @@ function plotProperty(propertyMatrix0,propertyMatrix1,xAxis,filename,color,yLabe
     )
 
     draw(PNG(filename, 2.5inch, 2inch),plt)
+    draw(PNG("big_"*filename, 5inch, 4inch),plt)
 
 end
 
@@ -91,6 +94,6 @@ function plotPropertyLines(propertyMatrix,filename,color,yLabel)
      )
 
     draw(PNG(filename, 2.5inch, 2inch),plt)
-    
+    draw(PNG("big_"*filename, 5inch, 4inch),plt)
 end
 

@@ -7,8 +7,8 @@ records the performance against generation
 using Statistics,DataFrames,Gadfly,ProgressMeter,Colors
 import Cairo, Fontconfig
 
-include("simple_agent.jl")
-include("utilities.jl")
+include("../utilities/simple_agent.jl")
+include("../utilities/utilities.jl")
     
 n=8
 bottleneckN=50

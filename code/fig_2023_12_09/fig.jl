@@ -5,8 +5,8 @@ makes agent and varies the autoencoder set size
 using Statistics,DataFrames,Gadfly,ProgressMeter
 import Cairo, Fontconfig
 
-include("two_way_agent.jl")
-include("utilities.jl")
+include("../utilities/two_way_agent.jl")
+include("../utilities/utilities_2023_12_09.jl")
     
 bitN=8
 
