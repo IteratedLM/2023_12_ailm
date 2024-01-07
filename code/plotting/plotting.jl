@@ -64,9 +64,7 @@ function plotProperty(propertyMatrix0,propertyMatrix1,xAxis,filename,color,yLabe
     draw(PNG("big_"*filename, 5inch, 4inch),plt)
 
 end
-
-    
-
+        
 function plotPropertyLines(propertyMatrix,filename,color,yLabel)
 
     numTimePoints = size(propertyMatrix, 1)
@@ -77,8 +75,8 @@ function plotPropertyLines(propertyMatrix,filename,color,yLabel)
     df.trial = repeat(1:numTrials, inner=numTimePoints)
     df.performance = vec(propertyMatrix)
 
-    avgPerformance = mean(propertyMatrix, dims=2)[1:end] |> vec
-    avgDf = DataFrame(time=1:numTimePoints, avgPerformance=avgPerformance)
+    avgPerformance = mean(propertyMatrix, dims=2)[2:end] |> vec
+    avgDf = DataFrame(time=2:numTimePoints, avgPerformance=avgPerformance)
 
        
     alphaValue=0.3
