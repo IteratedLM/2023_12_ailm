@@ -13,6 +13,26 @@ function plot_best(df::DataFrame,filename)
 end
 
 
+function plot_best(dfA::DataFrame,dfB::DataFrame,filename)
+
+    plt1=plot(layer(dfA, x=:n, y=:bottle, Geom.point, Geom.smooth(method=:lm),Theme(default_color="red")),
+              layer(dfB, x=:n, y=:bottle, Geom.point, Geom.smooth(method=:lm),Theme(default_color="blue")),
+              Theme(background_color=colorant"white"))
+    draw(PNG(filename*"_bottle_both.png", 5inch, 2inch),plt1)
+    draw(PNG("big_"*filename*"_bottle_both.png", 8inch, 4inch),plt1)
+
+    plt2=plot(
+    layer(dfA, x=:n, y=:generation, Geom.point,Theme(default_color="red"),Geom.line),
+    layer(dfB, x=:n, y=:generation, Geom.point,Theme(default_color="blue"),Geom.line),
+    Theme(background_color=colorant"white"))
+    draw(PNG(filename*"_gen_both.png", 2.5inch, 2inch),plt2)
+    draw(PNG("big_"*filename*"_gen_both.png", 5inch, 4inch),plt2)
+
+    
+end
+
+
+
 function plot_best(df::DataFrame,filename,interscept,slope,range)
 
     line1(x) = interscept+slope*x-range

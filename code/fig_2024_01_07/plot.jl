@@ -3,10 +3,7 @@ using CSV, DataFrames,Gadfly
 import Cairo, Fontconfig
 include("../plotting/plotting.jl")
 
-#filename="ailm_50"
-#filename="ailm_100"
-#filename="ailm_100_100"
-filename="ailm_50_150"
+filename="ailm_n16"
 
 df = CSV.File(filename*".csv") |> DataFrame
 
@@ -28,7 +25,7 @@ function makeMatrix(df::DataFrame,type::String)
 
 end
 
-generationN=50
+generationN=120
 filteredDf=filter(row -> row[:generation] <=generationN, df)
 
 
@@ -38,6 +35,7 @@ stableMatrix =makeMatrix(filteredDf,"s")
 
 generations=collect(0:generationN-1)
 
-plotPropertyLines(expressMatrix,filename*"_express.png",  colorant"blue","x")
-plotPropertyLines(composeMatrix,filename*"_compose.png",colorant"orange","c")
-plotPropertyLines(stableMatrix ,filename*"_stable.png" ,colorant"purple","s")
+plotPropertyLines(expressMatrix,filename*"_express.png",  colorant"blue","x",generationN)
+plotPropertyLines(composeMatrix,filename*"_compose.png",colorant"orange","c",generationN)
+plotPropertyLines(stableMatrix ,filename*"_stable.png" ,colorant"purple","s",generationN)
+

@@ -4,55 +4,30 @@
 #prints out the results
 
 
-using Statistics,DataFrames,Gadfly,ProgressMeter,Colors
-import Cairo, Fontconfig
+using Statistics,DataFrames
+
 
 include("../utilities/two_way_agent.jl")
 include("../utilities/utilities.jl")
     
-bitN=8
+bitN=20
+generationN=120
+bottleN=152
+reflectionX=3
+reflectionN=reflectionX*bottleN
 
-reflectionE=8
-
-#=
-bottleN=95
-reflectionN=3*bottleN
-=#
-
-#same A-C
-#=
-bottleN=100
-reflectionN=100
-same=true
-filename="ailm_100.csv"
-=#
-
-
-#same D-E
-#=
-bottleN=50
-reflectionN=50
-same=true
-filename="ailm_50.csv"
-=#
-
-
-#different A-C
-#=
-    bottleN=100
-reflectionN=100
 same=false
-filename="ailm_100_100.csv"
-=#
 
-
-#different D-F
-bottleN=50
-reflectionN=150
-same=false
-filename="ailm_50_150.csv"
+#
+#numEpochs=50
+#filename="ailm_50e.csv"
 #
 
+
+#
+numEpochs=20
+filename="results/ailm_n20_"*ARGS[1]*".csv"
+#
 
 
 loss(nn, x,y)= Flux.mse(nn(x), y)
@@ -60,13 +35,10 @@ loss(nn, x,y)= Flux.mse(nn(x), y)
 learningRate=5.0
 optimizer=Flux.Optimise.Descent(learningRate)
 
-numEpochs=20
 
-generationN=80
-trialsN=25
+trialC=parse(Int,ARGS[1])
 
-mu1=0.125
-mu2=0.125
+reflectionE=8
 
 firstRun=true
 
@@ -79,7 +51,6 @@ if firstRun
     end
 end
 
-progress= Progress(trialsN*generationN)
 
 bgCompose=0.0::Float64
 bgExpress=0.0::Float64
@@ -100,11 +71,17 @@ for backgroundC in 1:backgroundN
 end
 
 
+
+println("background")
+println("compose"," ",bgCompose)
+println("express"," ",bgExpress)
+println("stable "," ",bgStable)
+
 file=open(filename, "a")                   
 
-for trialC in 1:trialsN
-
-    global(bgCompose,bgExpress,bgStable,file,bitN)
+let
+    
+    global(bgCompose,bgExpress,bgStable,file,bitN,trialC)
     
     child=makeAgent(bitN)
     parentTable=randomTable(bitN)
@@ -118,12 +95,10 @@ for trialC in 1:trialsN
         else            
             shuffledSignals=randperm(2^bitN)
         end
-
-
+        
         exemplars1 = shuffledMeanings[1:bottleN]
         exemplars2 = copy(exemplars1)
-
-        signals =   shuffledSignals[1:reflectionN]
+        signals = shuffledSignals[1:reflectionN]
         
         makeTable(child)
         oldParent=copy(parentTable)
@@ -144,7 +119,7 @@ for trialC in 1:trialsN
             
             shuffle!(exemplars1)
             shuffle!(exemplars2)
-
+            
             for meaningC in 1:bottleN
 
                 meaning1=exemplars1[meaningC]
@@ -155,18 +130,15 @@ for trialC in 1:trialsN
                 
                 dataI=[(v2BV(bitN,meaning2-1),v2BV(bitN,parentTable[meaning2]-1))]
                 Flux.train!(loss, child.m2s, dataI, optimizer)
-                
+
                 for _ in 1:reflectionE
                     signal=rand(signals)
                     dataI=[(v2BV(bitN,signal-1),v2BV(bitN,signal-1))]
                     Flux.train!(loss, child.s2s, dataI, optimizer)
                 end
             end
-
         end
 
-        
-    next!(progress)
         
     end
 

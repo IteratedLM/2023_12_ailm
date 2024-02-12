@@ -39,6 +39,6 @@ composeMatrix1=makeMatrix(df,"c1")
 stableMatrix0=makeMatrix(df,"s0")
 stableMatrix1=makeMatrix(df,"s1")
 
-plotProperty(expressMatrix1,expressMatrix0,botV,"oilm_express_vb.png",colorant"blue","e")
+plotProperty(expressMatrix1,expressMatrix0,botV,"oilm_express_vb.png",colorant"blue","x")
 plotProperty(composeMatrix1,composeMatrix0,botV,"oilm_compose_vb.png",colorant"orange","c")
 plotProperty(stableMatrix1,  stableMatrix0,botV,"oilm_stable_vb.png",colorant"purple","s")

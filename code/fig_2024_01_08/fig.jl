@@ -1,58 +1,23 @@
 #makes a a ILM agent
-#does this for n=8
-#trains it using different exemplar and reflection sets
-#prints out the results
 
 
-using Statistics,DataFrames,Gadfly,ProgressMeter,Colors
-import Cairo, Fontconfig
+using Statistics,DataFrames
 
 include("../utilities/two_way_agent.jl")
 include("../utilities/utilities.jl")
     
-bitN=8
+bitN=16
+generationN=40
+bottleN=114
+reflectionX=3
+reflectionN=reflectionX*bottleN
 
-reflectionE=8
-
-#=
-bottleN=95
-reflectionN=3*bottleN
-=#
-
-#same A-C
-#=
-bottleN=100
-reflectionN=100
-same=true
-filename="ailm_100.csv"
-=#
-
-
-#same D-E
-#=
-bottleN=50
-reflectionN=50
-same=true
-filename="ailm_50.csv"
-=#
-
-
-#different A-C
-#=
-    bottleN=100
-reflectionN=100
 same=false
-filename="ailm_100_100.csv"
-=#
 
-
-#different D-F
-bottleN=50
-reflectionN=150
-same=false
-filename="ailm_50_150.csv"
 #
-
+numEpochs=20
+filename="results/ailm_"*ARGS[1]*".csv"
+#
 
 
 loss(nn, x,y)= Flux.mse(nn(x), y)
@@ -60,26 +25,10 @@ loss(nn, x,y)= Flux.mse(nn(x), y)
 learningRate=5.0
 optimizer=Flux.Optimise.Descent(learningRate)
 
-numEpochs=20
+batchC=parse(Int,ARGS[1])
+trialN=5
 
-generationN=80
-trialsN=25
-
-mu1=0.125
-mu2=0.125
-
-firstRun=true
-
-if firstRun
-    header1 = "generation,trial,propertyType,property\n"
-    header2 = "$generationN,-1,m,-1.0\n"
-    open(filename, "w") do file
-        write(file, header1)
-        write(file, header2)
-    end
-end
-
-progress= Progress(trialsN*generationN)
+reflectionE=8
 
 bgCompose=0.0::Float64
 bgExpress=0.0::Float64
@@ -100,11 +49,17 @@ for backgroundC in 1:backgroundN
 end
 
 
+
+println("background")
+println("compose"," ",bgCompose)
+println("express"," ",bgExpress)
+println("stable "," ",bgStable)
+
 file=open(filename, "a")                   
 
-for trialC in 1:trialsN
-
-    global(bgCompose,bgExpress,bgStable,file,bitN)
+for trialC in 1:trialN
+    
+    global(bgCompose,bgExpress,bgStable,file,bitN,batchC)
     
     child=makeAgent(bitN)
     parentTable=randomTable(bitN)
@@ -118,12 +73,10 @@ for trialC in 1:trialsN
         else            
             shuffledSignals=randperm(2^bitN)
         end
-
-
+        
         exemplars1 = shuffledMeanings[1:bottleN]
         exemplars2 = copy(exemplars1)
-
-        signals =   shuffledSignals[1:reflectionN]
+        signals = shuffledSignals[1:reflectionN]
         
         makeTable(child)
         oldParent=copy(parentTable)
@@ -133,9 +86,11 @@ for trialC in 1:trialsN
         compose=rebased(compositionality(child),bgCompose)
         stable =rebased(stability(parentTable,oldParent),bgStable)
 
-        write(file,"$generation,$trialC,e,$express\n")
-        write(file,"$generation,$trialC,c,$compose\n")
-        write(file,"$generation,$trialC,s,$stable\n")
+        trialOverallC=(batchC-1)*trialN+trialC
+        
+        write(file,"$generation,$trialOverallC,e,$express\n")
+        write(file,"$generation,$trialOverallC,c,$compose\n")
+        write(file,"$generation,$trialOverallC,s,$stable\n")
         flush(file)
         
         child=makeAgent(bitN)
@@ -144,7 +99,7 @@ for trialC in 1:trialsN
             
             shuffle!(exemplars1)
             shuffle!(exemplars2)
-
+            
             for meaningC in 1:bottleN
 
                 meaning1=exemplars1[meaningC]
@@ -155,18 +110,16 @@ for trialC in 1:trialsN
                 
                 dataI=[(v2BV(bitN,meaning2-1),v2BV(bitN,parentTable[meaning2]-1))]
                 Flux.train!(loss, child.m2s, dataI, optimizer)
-                
+
                 for _ in 1:reflectionE
                     signal=rand(signals)
                     dataI=[(v2BV(bitN,signal-1),v2BV(bitN,signal-1))]
                     Flux.train!(loss, child.s2s, dataI, optimizer)
                 end
             end
-
         end
 
         
-    next!(progress)
         
     end
 
