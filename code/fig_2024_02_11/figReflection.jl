@@ -14,19 +14,20 @@ bitN=10
 
 reflectionE=8
 
-same=true
+same=false
 
 generation0=15
 generation1=40
 
 lambdaR=1
 
-bottleN = parse(Int, ARGS[1])
+bottleN = 75
+reflectionN=parse(Int, ARGS[1])
 
 if same
-    filename="results/ailm_vb_same_"*ARGS[1]*".csv"
+    filename="results/ailm_vr_same_"*ARGS[1]*".csv"
 else
-    filename="results/ailm_vb_unsame_"*ARGS[1]*".csv"
+    filename="results/ailm_vr_unsame_"*ARGS[1]*".csv"
 end
     
 loss(nn, x,y)= Flux.mse(nn(x), y)
@@ -38,7 +39,7 @@ numEpochs=20
 
 trialsN=25
 
-header = "bottle,trial,propertyType,property\n"
+header = "reflection,trial,propertyType,property\n"
 open(filename, "w") do file
     write(file, header)
 end
@@ -67,7 +68,7 @@ for trialC in 1:trialsN
 
     global(bgCompose,bgExpress,bgStable,filename,bitN)
 
-    reflectionC=lambdaR*bottleN
+    
         
     child=makeAgent(bitN)
     parentTable=randomTable(bitN)
@@ -85,7 +86,7 @@ for trialC in 1:trialsN
         exemplars1 = shuffledMeanings[1:bottleN]
         exemplars2 = copy(exemplars1)
         
-        signals =   shuffledSignals[1:reflectionC]
+        signals =   shuffledSignals[1:reflectionN]
         
         makeTable(child)
         oldParent=copy(parentTable)
@@ -103,9 +104,9 @@ for trialC in 1:trialsN
             end
             
             open(filename, "a") do file                   
-                write(file, "$bottleN,$trialC,e"*gen*",$express\n")
-                write(file, "$bottleN,$trialC,c"*gen*",$compose\n")
-                write(file, "$bottleN,$trialC,s"*gen*",$stable\n")
+                write(file, "$reflectionN,$trialC,e"*gen*",$express\n")
+                write(file, "$reflectionN,$trialC,c"*gen*",$compose\n")
+                write(file, "$reflectionN,$trialC,s"*gen*",$stable\n")
                 flush(file)
             end
         end

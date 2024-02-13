@@ -3,41 +3,47 @@ using CSV, DataFrames,Gadfly
 import Cairo, Fontconfig
 include("../plotting/plotting.jl")
 
-#filename="ailm_50"
-#filename="ailm_100"
-#filename="ailm_100_100"
-filename="ailm_50_150"
 
-df = CSV.File(filename*".csv") |> DataFrame
+ilmName="ailm"
+conditionName="vb_3"
+
+
+df = CSV.File(ilmName*"_"*conditionName*".csv") |> DataFrame
 
 function makeMatrix(df::DataFrame,type::String)
-    filtered_df = filter(row -> row.propertyType == type, df)
+    filteredDf = filter(row -> row.propertyType == type, df)
 
-    max_generation = maximum(filtered_df.generation)
-    max_trial = maximum(filtered_df.trial)
+    bottleV=sort(unique(filteredDf.bottle))
+    
+    filteredDf.bottleI = [findfirst(==(b), bottleV) for b in filteredDf.bottle]
+    
+    maxBottle = maximum(filteredDf.bottleI)
+    maxTrial = maximum(filteredDf.trial)
 
 
-    matrix = fill(NaN, max_generation, max_trial)  # or use zeros() if you prefer
+    matrix = fill(NaN, maxBottle, maxTrial) 
 
     
-    for row in eachrow(filtered_df)
-        matrix[row.generation, row.trial] = row.property
+    for row in eachrow(filteredDf)
+        matrix[row.bottleI, row.trial] = row.property
     end
 
     matrix
 
 end
 
-generationN=50
-filteredDf=filter(row -> row[:generation] <=generationN, df)
+bottleV = sort(unique(df.bottle))
+
+expressMatrix0=makeMatrix(df,"e0")
+expressMatrix1=makeMatrix(df,"e1")
+composeMatrix0=makeMatrix(df,"c0")
+composeMatrix1=makeMatrix(df,"c1")
+stableMatrix0=makeMatrix(df,"s0")
+stableMatrix1=makeMatrix(df,"s1")
+
+pngName=conditionName*".png"
 
 
-expressMatrix=makeMatrix(filteredDf,"e")
-composeMatrix=makeMatrix(filteredDf,"c")
-stableMatrix =makeMatrix(filteredDf,"s")
-
-generations=collect(0:generationN-1)
-
-plotPropertyLines(expressMatrix,filename*"_express.png",  colorant"blue","x")
-plotPropertyLines(composeMatrix,filename*"_compose.png",colorant"orange","c")
-plotPropertyLines(stableMatrix ,filename*"_stable.png" ,colorant"purple","s")
+plotProperty(expressMatrix1,expressMatrix0,bottleV,ilmName*"_express_"*pngName,colorant"blue","x")
+plotProperty(composeMatrix1,composeMatrix0,bottleV,ilmName*"_compress_"*pngName,colorant"orange","c")
+plotProperty(stableMatrix1,  stableMatrix0,bottleV,ilmName*"_stable_"*pngName,colorant"purple","s")
