@@ -5,7 +5,7 @@ include("../plotting/plotting.jl")
 
 
 ilmName="ailm"
-conditionName="vb_3"
+conditionName="vb_same"
 
 
 df = CSV.File(ilmName*"_"*conditionName*".csv") |> DataFrame

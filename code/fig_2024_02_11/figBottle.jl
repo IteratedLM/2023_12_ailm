@@ -4,22 +4,22 @@
 #prints out the results
 
 
-using Statistics,DataFrames,Gadfly,ProgressMeter,Colors
+using Statistics,DataFrames,Gadfly,Colors
 import Cairo, Fontconfig
 
-include("../utilities/two_way_agent.jl")
+include("../utilities/m2m_agent.jl")
 include("../utilities/utilities.jl")
     
 bitN=10
 
-reflectionE=8
+reflectionE=20
 
 same=true
 
 generation0=15
 generation1=40
 
-lambdaR=1
+lambdaR=3
 
 bottleN = parse(Int, ARGS[1])
 
@@ -34,7 +34,7 @@ loss(nn, x,y)= Flux.mse(nn(x), y)
 learningRate=5.0
 optimizer=Flux.Optimise.Descent(learningRate)
 
-numEpochs=20
+numEpochs=30
 
 trialsN=25
 
@@ -42,8 +42,6 @@ header = "bottle,trial,propertyType,property\n"
 open(filename, "w") do file
     write(file, header)
 end
-
-progress= Progress(trialsN)
 
 bgCompose=0.0::Float64
 bgExpress=0.0::Float64
@@ -67,7 +65,7 @@ for trialC in 1:trialsN
 
     global(bgCompose,bgExpress,bgStable,filename,bitN)
 
-    reflectionC=lambdaR*bottleN
+    autoN=lambdaR*bottleN
         
     child=makeAgent(bitN)
     parentTable=randomTable(bitN)
@@ -75,17 +73,17 @@ for trialC in 1:trialsN
     for generation in 1:generation1
         
         shuffledMeanings = randperm(2^bitN)
-        shuffledSignals  = Vector{Int64}[]
+        shuffledAutos  = Vector{Int64}[]
         if same
-            shuffledSignals=copy(shuffledMeanings)
+            shuffledAutos=copy(shuffledMeanings)
         else            
-            shuffledSignals=randperm(2^bitN)
+            shuffledAutos=randperm(2^bitN)
         end
         
         exemplars1 = shuffledMeanings[1:bottleN]
         exemplars2 = copy(exemplars1)
         
-        signals =   shuffledSignals[1:reflectionC]
+        autos =   shuffledAutos[1:autoN]
         
         makeTable(child)
         oldParent=copy(parentTable)
@@ -129,9 +127,9 @@ for trialC in 1:trialsN
                 Flux.train!(loss, child.m2s, dataI, optimizer)
                 
                 for _ in 1:reflectionE
-                    signal=rand(signals)
-                    dataI=[(v2BV(bitN,signal-1),v2BV(bitN,signal-1))]
-                    Flux.train!(loss, child.s2s, dataI, optimizer)
+                    meaning=rand(autos)-1
+                    dataI=[(v2BV(bitN,meaning),v2BV(bitN,meaning))]
+                    Flux.train!(loss, child.m2m, dataI, optimizer)
                 end
             end
             
@@ -139,6 +137,5 @@ for trialC in 1:trialsN
         
     end
     
-    next!(progress)
     
 end
