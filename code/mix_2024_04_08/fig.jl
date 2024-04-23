@@ -8,16 +8,17 @@
 using Statistics,DataFrames,Gadfly,ProgressMeter,Colors
 import Cairo, Fontconfig
 
-include("../utilities/two_way_agent.jl")
+include("../utilities/m2m_agent_big.jl")
 include("../utilities/utilities.jl")
     
-bitN=8
+bitNM=9
+bitNS=12
+hiddenN=10
 
-reflectionE=8
+reflectionE=15
 
-bottleN=50
-reflectionN=150
-same=false
+bottleN=80
+reflectionN=3*bottleN
 p=parse(Float64, ARGS[1])
 
 filenameRoot="./results/ailm"
@@ -32,27 +33,29 @@ optimizer=Flux.Optimise.Descent(learningRate)
 numEpochs=20
 
 generationN=20
-trialsN=25
+trialsN=10
 
 header = "generation,trial,p,propertyType,property\n"
 open(filenameBase, "w") do file
     write(file, header)
 end
 
-bgCompose=0.0::Float64
-bgExpress=0.0::Float64
+#bgCompose=0.0::Float64
+#bgExpress=0.0::Float64
 bgStable =0.0::Float64
 backgroundN=20
 
+
 for backgroundC in 1:backgroundN
 
-    global(bgCompose,bgExpress,bgStable)
-    child=makeAgent(bitN)
-    anotherChild=makeAgent(bitN)
+    #global(bgCompose,bgExpress,bgStable)
+    global(bgStable)
+    child=makeAgent(bitNM,bitNS,hiddenN)
+    anotherChild=makeAgent(bitNM,bitNS,hiddenN)
     makeTable(child)
     makeTable(anotherChild)
-    bgCompose+=0.5*(compositionality(child)+compositionality(anotherChild))/backgroundN
-    bgExpress+=0.5*(expressivity(child)+expressivity(anotherChild))/backgroundN
+    #bgCompose+=0.5*(compositionality(child)+compositionality(anotherChild))/backgroundN
+    #bgExpress+=0.5*(expressivity(child)+expressivity(anotherChild))/backgroundN
     bgStable+=stability(child.m2sTable,anotherChild.m2sTable)/backgroundN
     
 end
@@ -62,30 +65,26 @@ file=open(filename, "a")
 
 for trialC in 1:trialsN
 
-    tableA=randomCompositionalTable(bitN)
-    tableB=randomCompositionalTable(bitN)
+    tableA=randomCompositionalTable(bitNM,bitNS)
+    tableB=randomCompositionalTable(bitNM,bitNS)
     
-    global(bgCompose,bgExpress,bgStable,file,bitN)
+    #global(bgCompose,bgExpress,bgStable,file,bitN)
+    global(bgStable,file,bitN)
     
-    child=makeAgent(bitN)
+    child=makeAgent(bitNM,bitNS,hiddenN)
     
     parentTable=spliceTable(p,tableA,tableB)
     
     for generation in 1:generationN
         
-        shuffledMeanings = randperm(2^bitN)
-        shuffledSignals  = Vector{Int64}[]
-        if same
-            shuffledSignals=copy(shuffledMeanings)
-        else            
-            shuffledSignals=randperm(2^bitN)
-        end
-
+        shuffledMeanings = randperm(2^bitNM)
+        shuffledAutos = randperm(2^bitNM)
+        
 
         exemplars1 = shuffledMeanings[1:bottleN]
         exemplars2 = copy(exemplars1)
 
-        signals =   shuffledSignals[1:reflectionN]
+        autos =   shuffledAutos[1:reflectionN]
         
         makeTable(child)
         oldParent=copy(parentTable)
@@ -93,20 +92,20 @@ for trialC in 1:trialsN
             parentTable=child.m2sTable
         end
         
-        express=rebased(expressivity(child),bgExpress)
-        compose=rebased(compositionality(child),bgCompose)
+        #express=rebased(expressivity(child),bgExpress)
+        #compose=rebased(compositionality(child),bgCompose)
         stable =rebased(stability(parentTable,oldParent),bgStable)
         stableA=rebased(stability(parentTable,tableA),bgStable)
         stableB=rebased(stability(parentTable,tableB),bgStable)
         
-        write(file,"$generation,$trialC,$p,e,$express\n")
-        write(file,"$generation,$trialC,$p,c,$compose\n")
+        #write(file,"$generation,$trialC,$p,e,$express\n")
+        #write(file,"$generation,$trialC,$p,c,$compose\n")
         write(file,"$generation,$trialC,$p,s,$stable\n")
         write(file,"$generation,$trialC,$p,a,$stableA\n")
         write(file,"$generation,$trialC,$p,b,$stableB\n")
         flush(file)
 
-        child=makeAgent(bitN)
+        child=makeAgent(bitNM,bitNS,hiddenN)
 
         for epoch in 1:numEpochs
             
@@ -118,16 +117,16 @@ for trialC in 1:trialsN
                 meaning1=exemplars1[meaningC]
                 meaning2=exemplars2[meaningC]
                 
-                dataI=[(v2BV(bitN,parentTable[meaning1]-1),v2BV(bitN,meaning1-1))]
+                dataI=[(v2BV(bitNS,parentTable[meaning1]-1),v2BV(bitNM,meaning1-1))]
                 Flux.train!(loss, child.s2m, dataI, optimizer)
                 
-                dataI=[(v2BV(bitN,meaning2-1),v2BV(bitN,parentTable[meaning2]-1))]
+                dataI=[(v2BV(bitNM,meaning2-1),v2BV(bitNS,parentTable[meaning2]-1))]
                 Flux.train!(loss, child.m2s, dataI, optimizer)
                 
                 for _ in 1:reflectionE
-                    signal=rand(signals)
-                    dataI=[(v2BV(bitN,signal-1),v2BV(bitN,signal-1))]
-                    Flux.train!(loss, child.s2s, dataI, optimizer)
+                    auto=rand(autos)-1
+                    dataI=[(v2BV(bitNM,auto),v2BV(bitNM,auto))]
+                    Flux.train!(loss, child.m2m, dataI, optimizer)
                 end
             end
 
