@@ -4,11 +4,8 @@ import Cairo, Fontconfig
 include("../plotting/plotting.jl")
 
 
-ilmName="ailm"
-conditionName="vb_same"
 
-
-df = CSV.File(ilmName*"_"*conditionName*".csv") |> DataFrame
+df = CSV.File("ailm.csv") |> DataFrame
 
 function makeMatrix(df::DataFrame,type::String)
     filteredDf = filter(row -> row.propertyType == type, df)
@@ -41,9 +38,7 @@ composeMatrix1=makeMatrix(df,"c1")
 stableMatrix0=makeMatrix(df,"s0")
 stableMatrix1=makeMatrix(df,"s1")
 
-pngName=conditionName*".png"
 
-
-plotProperty(expressMatrix1,expressMatrix0,bottleV,ilmName*"_express_"*pngName,colorant"blue","x")
-plotProperty(composeMatrix1,composeMatrix0,bottleV,ilmName*"_compress_"*pngName,colorant"orange","c")
-plotProperty(stableMatrix1,  stableMatrix0,bottleV,ilmName*"_stable_"*pngName,colorant"purple","s")
+plotProperty(expressMatrix1,expressMatrix0,bottleV,"ailm_express.png",colorant"blue","x")
+plotProperty(composeMatrix1,composeMatrix0,bottleV,"ailm_compose.png",colorant"orange","c")
+plotProperty(stableMatrix1,  stableMatrix0,bottleV,"ailm_stable.png",colorant"purple","s")

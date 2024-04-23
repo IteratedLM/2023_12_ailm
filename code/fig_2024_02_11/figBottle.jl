@@ -19,7 +19,7 @@ same=true
 generation0=15
 generation1=40
 
-lambdaR=3
+lambdaR=1
 
 bottleN = parse(Int, ARGS[1])
 

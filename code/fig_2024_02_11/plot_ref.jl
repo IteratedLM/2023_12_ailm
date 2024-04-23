@@ -44,5 +44,5 @@ stableMatrix1= makeMatrix(df,"s1")
 pngName=conditionName*".png"
 
 plotProperty(expressMatrix1,expressMatrix0,reflectionV,ilmName*"_express_"*pngName,colorant"blue","x","autoencoder")
-plotProperty(composeMatrix1,composeMatrix0,reflectionV,ilmName*"_compress_"*pngName,colorant"orange","c","autoencoder")
+plotProperty(composeMatrix1,composeMatrix0,reflectionV,ilmName*"_compose_"*pngName,colorant"orange","c","autoencoder")
 plotProperty(stableMatrix1,  stableMatrix0,reflectionV,ilmName*"_stable_"*pngName,colorant"purple","s","autoencoder")
