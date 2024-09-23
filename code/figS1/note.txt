@@ -1,0 +1,1 @@
+not sure where the data for this figure - the old Fig S1 - went, it is easy enough to run again, the results here though are the new Fig S1, which has n=16 instead of n=10

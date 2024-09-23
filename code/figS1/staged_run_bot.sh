@@ -8,7 +8,7 @@ mkdir -p "$target_dir"
 
 find "$source_dir" -name "*.out" -mtime +2 -exec mv {} "$target_dir" \;
 
-for i in {10..200..10}; do
+for i in {1024..1025..50}; do
     echo ""
     echo $i
     sbatch runFigBot.sh $i

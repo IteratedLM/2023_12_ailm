@@ -10,14 +10,14 @@ import Cairo, Fontconfig
 include("../utilities/m2m_agent.jl")
 include("../utilities/utilities.jl")
     
-bitN=10
+bitN=10 # 2^10=1024
 
 reflectionE=20
 
 same=true
 
-generation0=15
-generation1=40
+generation0=5
+generation1=20
 
 lambdaR=1
 

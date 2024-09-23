@@ -12,7 +12,7 @@ for i in {50..425..25}; do
     echo ""
     echo $i
     sbatch runFigRef.sh $i
-    sleep 60
+    sleep 6
 done
 
 echo "All iterations complete."

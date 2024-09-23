@@ -7,21 +7,21 @@
 using Statistics,DataFrames,Gadfly,ProgressMeter,Colors
 import Cairo, Fontconfig
 
-include("../utilities/two_way_agent.jl")
+include("../utilities/m2m_agent.jl")
 include("../utilities/utilities.jl")
     
 bitN=10
 
-reflectionE=8
+reflectionE=20
 
 same=false
 
-generation0=15
-generation1=40
+generation0=5
+generation1=20
 
-lambdaR=1
+lambdaR=3
 
-bottleN = 75
+bottleN = 100
 reflectionN=parse(Int, ARGS[1])
 
 if same
@@ -76,17 +76,17 @@ for trialC in 1:trialsN
     for generation in 1:generation1
         
         shuffledMeanings = randperm(2^bitN)
-        shuffledSignals  = Vector{Int64}[]
+        shuffledAutos  = Vector{Int64}[]
         if same
-            shuffledSignals=copy(shuffledMeanings)
+            shuffledAutos=copy(shuffledMeanings)
         else            
-            shuffledSignals=randperm(2^bitN)
+            shuffledAutos=randperm(2^bitN)
         end
         
         exemplars1 = shuffledMeanings[1:bottleN]
         exemplars2 = copy(exemplars1)
         
-        signals =   shuffledSignals[1:reflectionN]
+        autos =   shuffledAutos[1:reflectionN]
         
         makeTable(child)
         oldParent=copy(parentTable)
@@ -130,9 +130,9 @@ for trialC in 1:trialsN
                 Flux.train!(loss, child.m2s, dataI, optimizer)
                 
                 for _ in 1:reflectionE
-                    signal=rand(signals)
-                    dataI=[(v2BV(bitN,signal-1),v2BV(bitN,signal-1))]
-                    Flux.train!(loss, child.s2s, dataI, optimizer)
+                    auto=rand(autos)-1
+                    dataI=[(v2BV(bitN,auto),v2BV(bitN,auto))]
+                    Flux.train!(loss, child.m2m, dataI, optimizer)
                 end
             end
             
