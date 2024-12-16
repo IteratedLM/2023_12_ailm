@@ -5,6 +5,7 @@ include("../plotting/plotting.jl")
 
 
 df = CSV.File("oilm.csv") |> DataFrame
+#df = CSV.File("oilm_b256.csv") |> DataFrame
 
 function makeMatrix(df::DataFrame,type::String)
     filtered_df = filter(row -> row.propertyType == type, df)
@@ -40,6 +41,14 @@ generationN=filter(row-> row.propertyType=="m",df)[1,:generation]
 
 generations=collect(0:generationN-1)
 
-plotPropertyLines(expressMatrix,"oilm_express.png",colorant"blue","e")
-plotPropertyLines(composeMatrix,"oilm_compose.png",colorant"orange","c")
-plotPropertyLines(stableMatrix,"oilm_stable.png" ,colorant"purple","s")
+#filename="oilm"
+filename="oilm"
+
+#plotPropertyLines(expressMatrix,filename*"_express.png",colorant"blue","x")
+#plotPropertyLines(composeMatrix,filename*"_compose.png",colorant"orange","c")
+#plotPropertyLines(stableMatrix, filename*"_stable.png" ,colorant"purple","s")
+
+
+plotPropertyLinesPLoS(expressMatrix,filename*"_express",colorant"blue","x")
+plotPropertyLinesPLoS(composeMatrix,filename*"_compose",colorant"orange","c")
+plotPropertyLinesPLoS(stableMatrix, filename*"_stable" ,colorant"purple","s")

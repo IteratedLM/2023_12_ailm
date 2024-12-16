@@ -1,7 +1,3 @@
-#makes a a ILM agent
-#does this for n=8
-#trains it using different exemplar and reflection sets
-#prints out the results
 
 
 using Statistics,DataFrames
@@ -13,14 +9,15 @@ include("../utilities/utilities.jl")
 bitN=8
 hiddenExtra=0
 generationN=50
-bottleN=75
+bottleN=250
 
 autoN=bottleN
 
-same=false
+same=true
 
 numEpochs=30
-filename="results/ailm_"*ARGS[1]*".csv"
+#filename="results/ailm_"*ARGS[1]*".csv"
+filename="results_b250/ailm_b250_"*ARGS[1]*".csv"
 
 loss(nn, x,y)= Flux.mse(nn(x), y)
 

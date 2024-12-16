@@ -1,8 +1,8 @@
 using Colors,Gadfly,Compose
 import Cairo, Fontconfig
-using Statistics,DataFrames,ProgressMeter
+using Statistics,DataFrames
 
-function lightColor(color,lightvalue=0.3)
+function getLightColor(color,lightValue=0.3)
 
     r=red(color)
     g=green(color)
@@ -96,7 +96,7 @@ function plotPropertyLines(propertyMatrix,filename,color,yLabel)
 
        
     alphaValue=0.3
-    lightColor = lightColor(color, alphaValue)
+    lightColor = getLightColor(color, alphaValue)
     
     plt=plot(
         layer(avgDf, x=:time, y=:avgPerformance, Geom.line,style(line_width=3pt,default_color=color)),
@@ -118,7 +118,6 @@ end
 
 function plotPropertyLinesScaled(propertyMatrix,filename,color,yLabel,scale)
 
-    
     numTimePoints = size(propertyMatrix, 1)
     numTrials = size(propertyMatrix, 2)
 
@@ -132,20 +131,65 @@ function plotPropertyLinesScaled(propertyMatrix,filename,color,yLabel,scale)
     avgDf = DataFrame(time=offset:numTimePoints, avgPerformance=avgPerformance)
 
        
-    alphaValue=0.3
-    lightColor = lightColor(color, alphaValue)
+    alphaValue=0.7
+    lightColor = getLightColor(color, alphaValue)
 
     plt=plot(
         layer(avgDf, x=:time, y=:avgPerformance, Geom.line, Theme(line_width=3pt,default_color=color)),
         layer(df, x=:time, y=:performance, group=:trial,Geom.line,Theme(line_width=0.5pt,default_color=lightColor)),
         Theme(plot_padding=[0mm,0mm,0mm,0mm],background_color=colorant"white"),
-        Guide.xlabel(""),
+        #Guide.xlabel(" "),
+        Guide.xlabel("generations"),
         Guide.ylabel(yLabel,orientation=:vertical),
         Coord.Cartesian(ymin=0.0,ymax=1.0)
      )
     draw(PNG(filename, scale*2.5inch, scale*2inch),plt)
     #draw(PNG("big_"*filename, scale*5inch, scale*4inch),plt)
 end
+
+        
+function plotPropertyLinesPLoS(propertyMatrix,filename,color,yLabel)
+    plotPropertyLinesScaledPLoS(propertyMatrix,filename,color,yLabel,1.0)
+end
+
+function plotPropertyLinesScaledPLoS(propertyMatrix,filename,color,yLabel,scale)
+
+    numTimePoints = size(propertyMatrix, 1)
+    numTrials = size(propertyMatrix, 2)
+
+    df = DataFrame()
+    df.time = repeat(1:numTimePoints, outer=numTrials)
+    df.trial = repeat(1:numTrials, inner=numTimePoints)
+    df.performance = vec(propertyMatrix)
+
+    offset=2
+    avgPerformance = mean(propertyMatrix, dims=2)[offset:end] |> vec
+    avgDf = DataFrame(time=offset:numTimePoints, avgPerformance=avgPerformance)
+
+       
+    alphaValue=0.7
+    lightColor = getLightColor(color, alphaValue)
+
+    plt=plot(
+        layer(avgDf, x=:time, y=:avgPerformance, Geom.line, Theme(line_width=3pt,default_color=color)),
+        layer(df, x=:time, y=:performance, group=:trial,Geom.line,Theme(line_width=0.5pt,default_color=lightColor)),
+        Theme(plot_padding=[0mm,0mm,0mm,0mm],background_color=colorant"white"
+              ,major_label_font="Arial",
+               major_label_font_size=10pt,
+               minor_label_font="Arial",
+               minor_label_font_size=10pt,
+               #title_font="Arial",
+              #title_font_size=12pt
+              ),
+        #Guide.xlabel(" "),
+        Guide.xlabel("generations"),
+        Guide.ylabel(yLabel,orientation=:vertical),
+        Coord.Cartesian(ymin=0.0,ymax=1.0)
+     )
+    draw(PDF(filename*".eps", scale*2.5inch, scale*2inch),plt)
+
+end
+
 
         
 function plotPropertyLines(propertyMatrix,filename,color,yLabel,xRange)
@@ -163,8 +207,8 @@ function plotPropertyLines(propertyMatrix,filename,color,yLabel,xRange)
 
 
 
-    alphaValue=0.3
-    lightColor = lightColor(color, alphaValue)
+    alphaValue=0.2
+    lightColor = getLightColor(color, alphaValue)
 
 
 
@@ -223,7 +267,7 @@ plt = plot(
         background_color=colorant"white",
         key_label_font_size=12pt
     ),
-    Guide.xlabel(""),
+    Guide.xlabel("generations"),
     Guide.ylabel("x/c/s", orientation=:vertical),
     Coord.Cartesian(ymin=0.0, ymax=1.0, xmin=0, xmax=xRange),
     Guide.colorkey(title="",pos=[0.05w,-0.4h])         

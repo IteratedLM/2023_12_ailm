@@ -34,5 +34,6 @@ stableMatrix =makeMatrix(filteredDf,"s")
 
 generations=collect(0:generationN-1)
 
-longPlotPropertyLines(expressMatrix,composeMatrix,stableMatrix,filename*"_long.png",[colorant"blue",colorant"orange",colorant"purple"],["x","c","s"],250)
+#longPlotPropertyLines(expressMatrix,composeMatrix,stableMatrix,filename*"_long.png",[colorant"blue",colorant"orange",colorant"purple"],["x","c","s"],250)
+longPlotPropertyLinesPLoS(expressMatrix,composeMatrix,stableMatrix,filename*"_long",[colorant"blue",colorant"orange",colorant"purple"],["x","c","s"],250)
 

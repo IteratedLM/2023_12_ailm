@@ -34,6 +34,10 @@ stableMatrix =makeMatrix(filteredDf,"s")
 
 generations=collect(0:generationN-1)
 
-plotPropertyLines(expressMatrix,filename*"_express.png",  colorant"blue","e")
-plotPropertyLines(composeMatrix,filename*"_compose.png",colorant"orange","c")
-plotPropertyLines(stableMatrix ,filename*"_stable.png" ,colorant"purple","s")
+#plotPropertyLines(expressMatrix,filename*"_express.png",  colorant"blue","e")
+#plotPropertyLines(composeMatrix,filename*"_compose.png",colorant"orange","c")
+#plotPropertyLines(stableMatrix ,filename*"_stable.png" ,colorant"purple","s")
+
+plotPropertyLinesPLoS(expressMatrix,filename*"_express",  colorant"blue","x")
+plotPropertyLinesPLoS(composeMatrix,filename*"_compose",colorant"orange","c")
+plotPropertyLinesPLoS(stableMatrix ,filename*"_stable" ,colorant"purple","s")
