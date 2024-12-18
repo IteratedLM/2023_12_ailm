@@ -26,10 +26,10 @@ loss(nn, x,y)= lossMSE(nn,x,y)
 learningRateL=1.0
 optimizerL=Flux.Optimise.Descent(learningRateL)
 
-numEpochs=20*50
+numEpochs=20
 
 generation0=15
-generation1=50
+generation1=40
 
 trialsN=25
 
@@ -87,10 +87,8 @@ for trialC in 1:trialsN
             child=makeAgent(n)
 
             totalLoss=0.0
-
-            normalizedEpochs=round(Int64,numEpochs/bottleC)
             
-            for epoch in 1:normalizedEpochs
+            for epoch in 1:numEpochs
                 
                 shuffle!(exemplars)
                 
