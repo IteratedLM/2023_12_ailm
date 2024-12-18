@@ -11,7 +11,8 @@ include("../utilities/simple_agent.jl")
 include("../utilities/utilities.jl")
     
 n=8
-bottleneckN=50
+#bottleneckN=50
+bottleneckN=256
 
 lossMSE(nn, x,y)= Flux.mse(nn(x), y)
 
@@ -32,7 +33,7 @@ trialsN=25
 #stableMatrix =Matrix{Float64}(undef,generationN,trialsN)
 
 
-filename="oilm.csv"
+filename="oilm_b256.csv"
 firstRun=true
 
 if firstRun
