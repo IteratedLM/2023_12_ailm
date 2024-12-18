@@ -42,19 +42,20 @@ FIGURE 8
 this is what used to be FIGURE 10 and is in fig10. The old figure
 didn't have the pink line in the "b" panel, this is what
 plot_with_sd.jl does, in the end it doesn't involve an sd of course.
-
+In the change to EPS the pink had to be changed to coral
 
 FIGURE 9
 used to be FIGURE 11 so in fig11
 
-FIGURE S0:
-This is the old FIGURE 5 and is in fig5
-
-FIGURE :
+FIGURE 10
 This used to FIGURE S1
+results_n10 vr_unsame -> GHI
 
 FIGURE 12DEF:
 This is also in fig4abc for some reason
 
 FIGURE 12ABC:
 This uses the code in fig789, just copy ailm.csv from the relevant results folder
+
+FIGURE S6:
+This used to be figure 5 and is in fig5 and, like in FIGURE 8, use plot_with_sd.jl
