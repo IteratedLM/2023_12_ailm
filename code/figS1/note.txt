@@ -1,1 +1,14 @@
-not sure where the data for this figure - the old Fig S1 - went, it is easy enough to run again, the results here though are the new Fig S1, which has n=16 instead of n=10
+
+the data for n=10 vb was regenerated when I was making the eps figures
+for PLoS. For reasons of confusion I plot both the vb and vr results
+using the same plotting programme, in the vr case by changing the
+column name by hand, which is a terrible but I hope forgiveable piece
+of laziness.
+
+
+_________________________________
+no longer true:
+
+not sure where the data for this figure - the old Fig S1 - went, it is
+easy enough to run again, the results here though are the new Fig S1,
+which has n=16 instead of n=10
