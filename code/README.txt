@@ -26,36 +26,69 @@ repair. Instead there is a translation here.
 FIGURE 1-3: these are introduction figures, there is no code with them
 
 FIGURE 5
+
+"The semi-supervised ILM evolves a stable, expressive, compositional language." 
+
 ABC - this is the old FIGURE 4 ABC and are in fig4abc
 DEF - old FIGURE 7 ABC
 GHI - old FIGURE 7 DEF
 so D-I are all in the folder fig789 where they are called fig7abc and fig7def.
 it is now labelled "fig:ailmGood"
 
-FIGURE 6ABC 6D  and 6EFG
+FIGURE 6
+
+"For larger languages A needs to be different from, and larger than, B"
+
+FIGURE 6ABC 6D and 6EFG
 again, these are in fig789, mv the relevant ailm.csv file in from the results_fig8abc and results_fig8efg; same for 6d but using the longPlot.jl programme
 
 FIGURE 7
-used to figure 9 use the results_fig9abc and results_fig9def ailm.csv files
+
+"Even larger languages do not become stable unless the hidden layer is made larger"
+
+used to be figure 9 use the results_fig9abc and results_fig9def ailm.csv files
 
 FIGURE 8
+
+"The required bottleneck size increases linearly for the semi-supervised ILM."
+
 this is what used to be FIGURE 10 and is in fig10. The old figure
 didn't have the pink line in the "b" panel, this is what
 plot_with_sd.jl does, in the end it doesn't involve an sd of course.
-In the change to EPS the pink had to be changed to coral
+In the change to EPS the pink had to be changed to magenta.
 
 FIGURE 9
-used to be FIGURE 11 so in fig11
+
+"XCS languages are easier to learn."
+
+used to be FIGURE 11
 
 FIGURE 10
+
+"Exploring optimal training set size"
+
 This used to FIGURE S1
 results_n10 vr_unsame -> GHI
+whereas the folder results has the data for ABC and DEF
+
+
+FIGURE 11
+
+"The obverter ILM is sensitive to bottleneck size"
+
+This used to be FIGURE 4DEF 
+
+
+FIGURE 12
+
+"Performance of the ILM when there is no bottleneck."
 
 FIGURE 12DEF:
 This is also in fig4abc for some reason
 
 FIGURE 12ABC:
-This uses the code in fig789, just copy ailm.csv from the relevant results folder
+This uses the code in fig789, just copy ailm.csv from the relevant results folder - results_b256
 
 FIGURE S6:
 This used to be figure 5 and is in fig5 and, like in FIGURE 8, use plot_with_sd.jl
+
